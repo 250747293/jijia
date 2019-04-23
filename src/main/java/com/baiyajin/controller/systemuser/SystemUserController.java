@@ -4,6 +4,8 @@ import com.baiyajin.entity.systemuser.SystemUser;
 import com.baiyajin.service.systemuser.SystemUserInterface;
 import com.baiyajin.util.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Api("后台用户")
 @Controller
 @RequestMapping("/SystemUserController")
 public class SystemUserController {
@@ -34,6 +37,10 @@ public class SystemUserController {
      * @param systemUser
      * @return
      */
+    @ApiOperation(value = "增加用户",notes =
+            "请求参数类型为:\t\n body\t\n"+
+                    "请求参数说明:\t\n name（必填） ,phone（必填）,password(必填),userTypeId(必填)\t\n" +
+                    "请求参数列表为:\t\n{\"name\":\"用户1\",\"phone\":\"15288102051\",\"password\":\"123\",\"userTypeId\":\"1\"}")
     @RequestMapping(value = "/addSysUser",method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
@@ -59,6 +66,10 @@ public class SystemUserController {
      * @param id
      * @return
      */
+    @ApiOperation(value = "删除用户",notes =
+            "请求参数类型为:\t\n body\t\n"+
+                    "请求参数说明:\t\n id（必填）" +
+                    "请求参数列表为:\t\n{\"id\":\"asdfasdfsadf\"}")
     @RequestMapping(value = "/deleteSysUser",method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
@@ -84,6 +95,10 @@ public class SystemUserController {
      * @param systemUser
      * @return
      */
+    @ApiOperation(value = "修改用户",notes =
+            "请求参数类型为:\t\n body\t\n"+
+                    "请求参数说明:\t\n id（必填） , name（非必填） ,phone（非必填）,password(非必填),userTypeId(必填)\t\n" +
+                    "请求参数列表为:\t\n{\"id\":\"asdfsad\",\"name\":\"用户1\",\"phone\":\"15288102051\",\"password\":\"123\",\"userTypeId\":\"1\"}")
     @RequestMapping(value = "/updateSysUser",method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
@@ -113,7 +128,11 @@ public class SystemUserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "后台用户登录",notes =
+            "请求参数类型为:\t\n body\t\n"+
+                    "请求参数说明:\t\nphone（必填） ,password（必填）\t\n" +
+                    "请求参数列表为:\t\n{\"phone\":\"15288102051\",\"password\":\"123\"}")
+    @RequestMapping(value = "/login", method = {RequestMethod.POST})
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
     public Map<String,Object> login(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> map) {
@@ -141,11 +160,12 @@ public class SystemUserController {
 
                 if(systemUsers.size() > 0 && systemUsers.get(0).getPassword().equals(ecPassWord)){
                     m.put("message","登录成功");
-                    systemUsers.get(0).setToken(JWT.createJWT(map.get("phone").toString()));
+                    m.put("result",0);
+                    systemUsers.get(0).setToken(JWT.createJWT(systemUsers.get(0).getId()));
                     m.put("user",systemUsers.get(0));
                     return m;
                 }else if(systemUsers.size() == 0){
-                    m.put("message","此手机号还没注册");
+                    m.put("message","此手机号未注册");
                     return m;
                 }else if(!systemUsers.get(0).getPassword().equals(ecPassWord)){
                     m.put("message","密码错误");

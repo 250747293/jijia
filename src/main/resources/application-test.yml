@@ -7,6 +7,7 @@ spring:
     password: '%#$123456jijia'
 #    url: jdbc:mysql://localhost:3306/jijia?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
     url: jdbc:mysql://${web.IP}:3306/jijia_test?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+#    url: jdbc:mysql://192.168.8.19:3306/jijia_test?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
 #服务
 server:
 #  max-http-header-size: 10240000  #解决java.lang.IllegalArgumentException: Request header is too large
@@ -23,3 +24,6 @@ server:
 #    key-alias: cherry
   tomcat:
     uri-encoding: UTF-8
+logback:
+  path: /logs/baiyajin_test.log
+  path_time: /logs/baiyajin_test_%d{yyyy-MM-dd}.log

@@ -6,6 +6,7 @@ import com.baiyajin.service.pagedata.PageMaterialInterface;
 import com.baiyajin.util.IdGenerate;
 import com.baiyajin.util.Results;
 import com.baiyajin.vo.pagedata.MaterialVo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api("材料")
 @Controller
 @RequestMapping("/PageMaterialController")
 public class PageMaterialController {
@@ -65,19 +67,25 @@ public class PageMaterialController {
      */
     @RequestMapping(value = "/findByTime",method = RequestMethod.POST)
     @ResponseBody
-    public List<MaterialVo> findByTime(MaterialVo materialVo){
+    public Object findByTime(MaterialVo materialVo){
         List<MaterialVo> materialVoList = pageMaterialInterface.findByTime(materialVo);
+        if (materialVoList == null || materialVoList.size() == 0){
+            return new Results(1,"暂时无数据");
+        }
                 return materialVoList;
     }
 
     @RequestMapping(value = "/getMaterials", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
-    public List<PageMaterial> getMaterials(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> map) {
+    public Object getMaterials(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> map) {
         Map<String,Object> pMap = new HashMap<String,Object>();
         pMap.put("id",map.get("id"));
-        List<PageMaterial> PageMaterialList = pageMaterialInterface.selectByMap(pMap);
-        return PageMaterialList;
+        List<PageMaterial> pageMaterialList = pageMaterialInterface.selectByMap(pMap);
+        if (pageMaterialList == null || pageMaterialList.size() == 0){
+            return new Results(1,"暂时无数据");
+        }
+        return pageMaterialList;
 
     }
 

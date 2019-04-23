@@ -6,6 +6,8 @@ import com.baiyajin.service.pagedata.PageUserInterface;
 import com.baiyajin.util.HashSalt;
 import com.baiyajin.util.JWT;
 import com.baiyajin.util.PhoneUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Api("前端用户")
 @Controller
 @RequestMapping("/PageUserController")
 public class PageUserController {
@@ -34,10 +37,14 @@ public class PageUserController {
 
 
     /**
-     * 后台用户登录
+     * 前台用户登录
      * @param
-     * @return
+     * @return user
      */
+    @ApiOperation(value = "前台登录",notes =
+            "请求参数类型为:\t\nJSON\t\n"+
+                    "请求参数说明:\t\nphone（必填） ,password（必填）\t\n" +
+                    "请求参数列表为:\t\n{\"phone\":\"15288102051\",\"password\":\"123\"}")
     @RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
@@ -66,11 +73,11 @@ public class PageUserController {
 
                 if(systemUsers.size() > 0 && systemUsers.get(0).getPassword().equals(ecPassWord)){
                     m.put("message","登录成功");
-                    systemUsers.get(0).setToken(JWT.createJWT(map.get("phone").toString()));
+                    systemUsers.get(0).setToken(JWT.createJWT(systemUsers.get(0).getId()));
                     m.put("user",systemUsers.get(0));
                     return m;
                 }else if(systemUsers.size() == 0){
-                    m.put("message","此手机号还没注册");
+                    m.put("message","此手机号未注册");
                     return m;
                 }else if(!systemUsers.get(0).getPassword().equals(ecPassWord)){
                     m.put("message","密码错误");
@@ -90,10 +97,14 @@ public class PageUserController {
 
 
     /**
-     * 后台用户注册账号
+     * 前台用户注册账号
      * @param
-     * @return
+     * @return user
      */
+    @ApiOperation(value = "前台用户注册账号",notes =
+            "请求参数类型为:\t\nJSON\t\n"+
+                    "请求参数说明:\t\nphone（必填） ,password（必填）,name（必填）\t\n" +
+                    "请求参数列表为:\t\n{\"phone\":\"15288102051\",\"password\":\"123\",\"name\":\"baiyajin\"}")
     @RequestMapping(value = "/registerAccount", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
     @Transactional(rollbackFor = Exception.class)
     @ResponseBody
@@ -110,7 +121,7 @@ public class PageUserController {
 
             if (null == systemUsers || systemUsers.size() == 0) {
                 user.setId(UUID.randomUUID().toString().replace("-", ""));
-                user.setStatusID("jy");
+                user.setStatusID("qy");
 
                 String salt = HashSalt.encode(Long.parseLong(user.getPhone()));
                 String hashSalt = HashSalt.getMD5(salt);
