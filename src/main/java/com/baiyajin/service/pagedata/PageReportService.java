@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PageReportService extends ServiceImpl<PageReportMapper,PageReport> implements PageReportInterface {
@@ -26,5 +27,25 @@ public class PageReportService extends ServiceImpl<PageReportMapper,PageReport> 
     @Override
     public int getCount(ReportVo reportVo) {
         return baseMapper.getCount(reportVo);
+    }
+
+    @Override
+    public int updateRemark(Map<String, Object> map) {
+        return baseMapper.updateRemark(map);
+    }
+
+    @Override
+    public Map<String, Object> selectRemarkByReportId(Map<String, Object> map) {
+        return baseMapper.selectRemarkByReportId(map);
+    }
+
+    @Override
+    public int addRemark(Map<String, Object> map) {
+        return baseMapper.addRemark(map);
+    }
+
+    @Override
+    public PageReport selectRemark(Map<String, Object> map) {
+        return baseMapper.selectRemark(map);
     }
 }

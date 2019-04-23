@@ -23,10 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Parameter;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api("报告")
 @Controller
@@ -113,6 +110,43 @@ public class PageReportController {
         }
         return new Results(0,"success");
     }
+//    /**
+//     * 修改报告
+//     * @param pageReport
+//     * @return
+//     */
+//    @ApiOperation(value = "修改报告" ,notes = "需要修改什么那些字段就传入那些字段，其中logo为图片上传，存放的是图片路径")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "id（必填),type(非必填),content(非必填),logo(必填)",value =  "id:123465",dataType = "String",paramType = "body")})
+//    @RequestMapping(value = "/updateReport",method = RequestMethod.POST)
+//    @ResponseBody
+//    @Transactional(rollbackFor = Exception.class)
+//    public Object updateReport(PageReport pageReport,@RequestParam(value = "startTimeStr",required = false) String startTimeStr,@RequestParam(value = "endTimeStr",required = false)String endTimeStr){
+//        String id = pageReport.getId();
+//        PageReport p = pageReportInterface.selectById(id);
+//
+//        if(p == null){
+//            return new Results(1,"该报告不存在");
+//        }
+//
+//        if (StringUtils.isNotBlank(startTimeStr) && StringUtils.isNotBlank(endTimeStr)){
+//            pageReport.setStartTime(DateUtils.setDate(DateUtils.parseDate(startTimeStr,"yyyy-mm"),5,01));
+//            Date endDate =  DateUtils.parseDate(endTimeStr,"yyyy-MM");
+//            String lastDay = DateUtils.getDateLastDay(endDate);
+//            Date endTimeDate = DateUtils.parseDate(lastDay,"yyyy-MM-dd");
+//            pageReport.setEndTime(endTimeDate);
+//        }
+//
+//        pageReport.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+//        try {
+//            pageReportInterface.updateById(pageReport);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new Results(1,"fail");
+//        }
+//        return new Results(0,"success");
+//    }
+
+
     /**
      * 修改报告
      * @param pageReport
@@ -123,13 +157,14 @@ public class PageReportController {
     @RequestMapping(value = "/updateReport",method = RequestMethod.POST)
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
-    public Object updateReport(PageReport pageReport,@RequestParam(value = "startTimeStr",required = false) String startTimeStr,@RequestParam(value = "endTimeStr",required = false)String endTimeStr){
+    public Object updateReport(PageReport pageReport,@RequestParam(value = "startTimeStr",required = false) String startTimeStr,@RequestParam(value = "endTimeStr",required = false)String endTimeStr,String token){
         String id = pageReport.getId();
-        PageReport p = pageReportInterface.selectById(id);
+        Claims claims = JWT.parseJWT(token);
+       String userId = claims.getId();
+       PageReport p = pageReportInterface.selectById(id);
         if(p == null){
             return new Results(1,"该报告不存在");
         }
-
         if (StringUtils.isNotBlank(startTimeStr) && StringUtils.isNotBlank(endTimeStr)){
             pageReport.setStartTime(DateUtils.setDate(DateUtils.parseDate(startTimeStr,"yyyy-mm"),5,01));
             Date endDate =  DateUtils.parseDate(endTimeStr,"yyyy-MM");
@@ -138,13 +173,28 @@ public class PageReportController {
             pageReport.setEndTime(endTimeDate);
         }
 
-        pageReport.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        try {
-            pageReportInterface.updateById(pageReport);
-        } catch (Exception e) {
-            e.printStackTrace();
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> reMap = new HashMap<>();
+        map.put("reportId",id);
+        map.put("userId",userId);
+        map.put("mark",pageReport.getMark());
+
+        reMap =  pageReportInterface.selectRemarkByReportId(map);
+        int i = 0;
+        if(reMap==null){
+            i = pageReportInterface.addRemark(map);
+        }else{
+            i = pageReportInterface.updateRemark(map);
+        }
+        if(i==0){
             return new Results(1,"fail");
         }
+//        try {
+//            pageReportInterface.updateById(pageReport);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new Results(1,"fail");
+//        }
         return new Results(0,"success");
     }
 
@@ -222,14 +272,24 @@ public class PageReportController {
     @ApiImplicitParams({@ApiImplicitParam(name = "id（必填)",value =  "id:123465",dataType = "String",paramType = "body")})
     @RequestMapping(value = "/getReportById",method = RequestMethod.POST)
     @ResponseBody
-    public Object getReportById(String id){
-        PageReport pageReport = pageReportInterface.selectById(id);
+    public Object getReportById(String id,String token){
+        Claims claims = JWT.parseJWT(token);
+        String userId = claims.getId();
+//        PageReport pageReport = pageReportInterface.selectById(id);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("reportId",id);
+        map.put("userId",userId);
+
+        PageReport pageReport = pageReportInterface.selectRemark(map);
+
         if (pageReport != null){
             pageReport.setContent(StringEscapeUtils.escapeHtml(pageReport.getContent()));
         }else {
             return new Results(1,"该报告不存在");
         }
         return pageReport;
+
     }
 
 
