@@ -1,6 +1,16 @@
+web:
+  file_home: file:/home/
+  IP: 127.0.0.1
+  #  IP: 192.168.8.29
+  #  IP: 192.168.8.19
+  packaging: war
+  tomcat_war: <exclusions><exclusion><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-tomcat</artifactId></exclusion></exclusions>
+
 #spring
 spring:
   profiles:
+#      active: test
+#      active: production
       active: develop
   freemarker:
     allow-request-override: false #页面热加载
@@ -27,12 +37,8 @@ spring:
   mvc:
     static-path-pattern: /**
   resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.file-path}
-web:
-  file-path: file:/home/
-#  IP: localhost
-  IP: 127.0.0.1
-#  IP: 192.168.8.19
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.file_home}
+
 
 #  servlet:
 #    context-path: /baiyajin
@@ -40,20 +46,18 @@ web:
 #logging日志
 logging:
   level:
-    com.business: DEBUG
-  config: classpath:logback.xml #实体扫描，多个package用逗号或者分号分隔
+    com.baiyajin: DEBUG
+  config: classpath:logback_spring.xml #实体扫描，多个package用逗号或者分号分隔
 
-#spring cloud配置
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
 
 #mybatis plus 设置
 mybatis-plus:
   mapper-locations: classpath:mapper/*/*.xml
   typeAliasesPackage: com.baiyajin.entity #实体扫描，多个package用逗号或者分号分隔
   global-config.refresh-mapper: true #刷新mapper 调试神器
+
+
+
 
 
 
