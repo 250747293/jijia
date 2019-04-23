@@ -13,6 +13,8 @@ public class HelperVo implements Serializable {
     private Date time;  //发布时间
     private String publishState;    //发布状态
     private String content; //内容
+    private Date createTime;
+    private Date updateTime;
 
     private Integer pageCurrent;    //分页查询开始记录数
     private Integer pSize;

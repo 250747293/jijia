@@ -10,7 +10,9 @@
             a.artCode AS "code",
             a.title AS "title",
             a.publishState as "publishState",
-            a.publishTime AS "time"
+            a.publishTime AS "time",
+            a.createTime as "createTime",
+            a.updateTime as "updateTime"
         FROM page_helper a
         WHERE a.statusID = "qy"
             <if test="publishState !=null and publishState != ''">
