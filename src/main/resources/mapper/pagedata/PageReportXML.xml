@@ -70,7 +70,7 @@
         values(#{userId},#{reportId},#{mark})
     </insert>
 
-    <select id="selectRemark" parameterType="java.util.Map" resultType="com.baiyajin.vo.pagedata.ReportVo">
+    <select id="selectRemark" parameterType="java.util.Map" resultType="com.baiyajin.entity.pagedata.PageReport">
     SELECT
         m.id,
         m.`type`,

@@ -274,6 +274,9 @@ public class PageReportController {
     @ResponseBody
     public Object getReportById(String id,String token){
         Claims claims = JWT.parseJWT(token);
+        if(claims==null){
+            return new Results(1,"登录失效");
+        }
         String userId = claims.getId();
 //        PageReport pageReport = pageReportInterface.selectById(id);
 

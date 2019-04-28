@@ -279,7 +279,7 @@ public class DateFormatUtil {
 		stDate1 =  DateFormatUtil.setDate(stDate1,5,1);
 
 		System.out.println(DateFormatUtil.dateToString(stDate1));*/
-
+		System.out.println(1.11*1.12);
 		System.out.println(DateFormatUtil.getDateLastDay(new Date()));
 	}
 
